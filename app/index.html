@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Simple Chat App</title>
+    <meta name="description" content="Simple real-time chat app using Flask and plain JS">
+    <meta name="author" content="Fares Ahmed">
+
+    <style>pre { margin: 0.5em 0px; }</style>
+
+</head>
+<body style="width: 800px; max-width: 100%; margin: auto; margin-top: 100px;">
+    <div style="margin: 0 5%;">
+        <input style="width: 100%;" type="text" maxlength="16" placeholder="Your Name" autofocus>
+        <div style="height: 400px; overflow: auto; display: flex; flex-direction: column-reverse; margin: 10px 0;"></div>
+        <input style="width: 100%;" type="text" maxlength="64" placeholder="Send Message" disabled>
+    </div>
+
+    <script>
+        const usrInput = document.getElementsByTagName("input")[0]
+        const msgInput = document.getElementsByTagName("input")[1]
+        const msgsNode = document.getElementsByTagName("div")[1]
+        let mark = ""
+
+        const sendMessage = (usr, msg) => {
+            xhr = new XMLHttpRequest()
+            xhr.open("POST", "/messages/send", true)
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send(`usr=${usr}&msg=${msg}`)
+
+            xhr.onreadystatechange = function() {
+                if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                    resp = JSON.parse(this.response)
+                    msgsNode.innerHTML = resp["msg"] + msgsNode.innerHTML
+                    mark = resp["mark"]
+                }
+            }
+        }
+
+        const heartbeat = () => {
+            xhr = new XMLHttpRequest()
+            xhr.open("POST", "/messages/heartbeat", true)
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send(`mark=${mark}`)
+
+            xhr.onreadystatechange = function() {
+                if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                    let resp = JSON.parse(this.response)
+                    if (resp["status"] === "outdated") {
+                        msgsNode.innerHTML = resp["msg"] + msgsNode.innerHTML
+                        mark = resp["mark"]
+                    }
+                }
+            }
+        }
+
+        usrInput.addEventListener("keydown", event => {
+            if (event.key == "Enter") { 
+                usrInput.disabled = true
+                msgInput.disabled = false
+                msgInput.focus()
+                setInterval(heartbeat, 2500)
+
+                sendMessage("Bot", `${usrInput.value} has enterted the chat.`)
+
+                window.addEventListener("beforeunload", event => sendMessage("Bot", `${usrInput.value} has left the chat.`))
+            }
+        })
+
+        msgInput.addEventListener("keydown", event => {
+            if (event.key == "Enter") {
+                sendMessage(usrInput.value, msgInput.value)
+                msgInput.value = ""
+            }
+        })
+    </script>
+
+</body>
