@@ -2,12 +2,12 @@
 
 > Simple real-time chat app using Flask and plain JS
 
-Real-time chat app using Flask, and plain Javascript and HTML without \
+Real-time chat app using Flask, and plain Javascript, HTML without \
 WebSockets/Socket.IO; Just simple HTTP requests back and forth \
 between the Javascript frontend and Flask.
 
 ## Usage
-Run the following commands to run the project on your localhost
+Run the following commands to run the project on your localhost:
 
 ```bash
 $ # Clone the repo to your local machine
@@ -20,7 +20,7 @@ $ # Run Flask!
 $ flask run
 ```
 
-The last command output should be something like this
+The last command output should be something like this:
 
 ```
  * Serving Flask app 'app/app.py' (lazy loading)
