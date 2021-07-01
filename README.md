@@ -1,6 +1,6 @@
 # Flask Simple Chat App
 
-> Simple real-time chat app using Flask and plain JS
+> Simple real-time chat app using Flask and plain Javascript
 
 Real-time chat app using Flask, and plain Javascript, HTML without \
 WebSockets/Socket.IO; Just simple HTTP requests back and forth \
